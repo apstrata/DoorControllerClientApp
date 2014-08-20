@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 
+	A very simple client application of the DoorController application.
+	It is meant to be deployed on a user's smartphone so it can be used to automatically
+	unlock a door by sending the user's Apstrata credentials to the door controller.
+	When it is launched, the application shares itself so it can be discovered on the local
+	network. Once discovered, the door controller client receives a message asking it to 
+	send the user's credentials (Apstrata signature).
+	Note that for this simple example, we consider that we only need to handle one door controller
+-->
+<program xmlns="http://www.kinoma.com/kpr/1">
+    
+    <require id="THEME" path="themes/flat/theme"/>
+	<require id="BUTTONS" path="controls/buttons"/>
+    
+    
+	<skin id="whiteSkin" color="white"/>
+	<style id="titleStyle" font="18px" color="black" align="center,middle"/>
+
+	<behavior id="ApplicationBehavior">
+	
+		<!-- The URL of the door controller speaking with the current instance -->
+		<field id="doorControllerUrl" />
+	
+		<!-- When application is launched, start scanning for nearby devices -->		
+		<method id="onLaunch" params="application">
+            <![CDATA[
+                application.discover("com.apstrata.doorcontroller");
+            ]]>
+        </method>
+        
+        <!-- When application is closed, stop scanning for nearby devices -->	
+        <method id="onQuit" params="application">
+        	<![CDATA[	        				
+				application.behavior.provideAuthenticationTokenAndInstruction(application.behavior.doorControllerUrl, "close");
+				var handle = new Handle();
+				handle.wait(5000);
+				application.forget("com.apstrata.doorcontroller");
+			]]>
+		</method>
+		
+		<!-- 
+			When a nearby device (door controller) is discovered or a nearby device disconnects:
+			send it a message with user's credentials
+		-->
+        <method id="onDiscovered" params="discoveries">
+            <![CDATA[ 
+            	try {
+            		
+            		if (discoveries.length > 0) {
+            		
+            			this.doorControllerUrl = discoveries[0].location;            		
+	            		application.behavior.openCloseButtonRef.behavior.onTap();            		  
+	            	}
+	            }catch(exception) {
+	            	trace(JSON.stringify(exception)) + "\n";
+	            }
+            ]]>
+        </method>
+        
+        <!-- Send instruction (open/close) to door controller with user's authentication token --> 
+        <method id="provideAuthenticationTokenAndInstruction" params="location, instruction">
+            <![CDATA[
+            
+                 var self = this;	            	    
+        	    // Prepare a request to send to Apstrata, asking for an authentication token for the current user,
+        	    // which will be sent to the door controller that will use it for identification
+				var params = {
+            	
+            		"operation":"VerifyCredentials", 
+            		"requestParams": {
+	            		"apsdb.bindReferrer": "false",
+            			"apsdb.action": "generate",
+            			"apsdb.tokenExpires": "180"
+            		},
+            		"headerAuthentication": false,  
+            		
+            		// If authentication token received, send it to the door controller         		
+            		"onSuccess": function(response) {
+            			
+            			var authRequest = {
+            				"credentials": response["apsdb.authToken"], 
+            				"user":ID,
+            				"instruction": instruction
+            			};
+            				
+            			var url = location + "credentials" + "?authRequest=" + JSON.stringify(authRequest);		            			
+            			var message = new Message(url);
+            			message.requestText = JSON.stringify(authRequest);	            	     
+                		application.invoke(message, Message.TEXT);
+            		},
+            		"onFailure": function(error) {
+            			trace("Verify Credentials failed " + JSON.stringify(error) + "\n");
+            		}
+            	};
+            	
+            	// Invoke Apstrata's VerifyCredenial API to obtain an authentication token
+				this.getApstrataClient().callApi(params);
+            ]]>
+        </method>
+        
+        <!-- Handle the response of a nearby controller device who verified the user's credentials. -->
+        <method id="onComplete" params="application, message, data">
+        	<![CDATA[
+				trace("Authentication response from controller: " + message.responseText + "\n");				
+			]]>
+		</method>
+        
+        <!-- Factory method to return an instance of Apstrata client -->
+		<method id="getApstrataClient" params="params">
+            <![CDATA[
+                
+				/*
+				 * Lazy intialization.Create the ApstrataClient instance with the provided configuration
+				 */
+				if (!this.apstrataClient) {
+				
+					var ApstrataClient = require("apstrataClientModule");
+					this.apstrataClient = new ApstrataClient({"authKey":AUTH_KEY, "id":ID, "password":PWD, "url":URL});
+				}
+				
+				return this.apstrataClient;
+            ]]>
+        </method>
+	</behavior>
+	
+	<container id="OpenCloseButton" width="90" height="30" like="BUTTONS.LabeledButton">
+		<behavior like="BUTTONS.LabeledButtonBehavior">
+			<method id="onTap"><![CDATA[
+				if (this.name == "Close") {
+					
+					this.name = "Open";					
+					application.behavior.provideAuthenticationTokenAndInstruction(application.behavior.doorControllerUrl, "close");
+				}else {
+					
+					this.name = "Close";
+					application.behavior.provideAuthenticationTokenAndInstruction(application.behavior.doorControllerUrl, "open");
+				}
+				
+				this.labeledButton.buttonLabel.string = this.name;
+			]]></method>
+		</behavior>
+	</container>            
+
+	<script><![CDATA[
+
+		/*
+		 * Your Apstrata application configuration
+		 */
+		var AUTH_KEY = "EC6EE27BA0";
+		var ID = "largowinch688@yahoo.com";
+		var PWD = "L@r80";
+		var URL = "https://wot.apstrata.com/apsdb/rest"; 
+		
+		var applicationBehavior = new ApplicationBehavior();
+		application.behavior = applicationBehavior;
+					
+		// Create a button that can be used to instruct the door controller to close/open the door
+		var openCloseButton = new OpenCloseButton({name : "Open"});
+		var top = Math.round((application.height - openCloseButton.height) / 2);
+		var left = Math.round((application.width - openCloseButton.width) / 2);
+		openCloseButton.coordinates.top = top;
+		openCloseButton.coordinates.left = left;
+		application.add(openCloseButton);
+		application.behavior.openCloseButtonRef = openCloseButton;
+	]]></script>
+</program>
