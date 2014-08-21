@@ -3,7 +3,7 @@
 	A very simple client application of the DoorController application.
 	It is meant to be deployed on a user's smartphone so it can be used to automatically
 	unlock a door by sending the user's Apstrata credentials to the door controller.
-	When it is launched, the application shares itself so it can be discovered on the local
+	When it is launched, the application starts scanning for door controllers on the local
 	network. Once discovered, the door controller client receives a message asking it to 
 	send the user's credentials (Apstrata signature).
 	Note that for this simple example, we consider that we only need to handle one door controller
