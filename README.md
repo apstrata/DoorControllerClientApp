@@ -2,7 +2,7 @@ DoorControllerClientApp
 =======================
 
 Sample kinoma application that interacts with the DoorControllerApp (aiutomatically opens the door, etc.)
-** Note: you need to use this application in combination with DoorControllerApp and DoorControllerApp-backend **
+**Note: you need to use this application in combination with DoorControllerApp and DoorControllerApp-backend**
 
 How to use 
 ==========
