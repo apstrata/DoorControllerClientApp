@@ -9,6 +9,7 @@ How to use
 ==========
 
 * Import the project to Kinoma studio
+* Make sure that you have specified adequate values for your test in the main.xml file (DoorControllerClientApp/src/main.xml)
 * Click on "application.xml" then right-click "Run as" > "Kinoma simulator". This launches a virtual Kinoma player device
 * A button is displayed in the middle of the screen. 
 * You can also export the application as an Android app. Double-click on "application xml" send click on "Android Export Wizard"
