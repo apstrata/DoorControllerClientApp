@@ -147,9 +147,9 @@
 		/*
 		 * Your Apstrata application configuration
 		 */
-		var AUTH_KEY = "EC6EE27BA0";
-		var ID = "largowinch688@yahoo.com";
-		var PWD = "L@r80";
+		var AUTH_KEY = "EF6FE27BA0"; // Replace with your Apstrata auth key
+		var ID = "largowinch688@yahoo.com"; // Replace with the ID of a user in your account
+		var PWD = "myPassw9rd"; // Replace with your user's password
 		var URL = "https://wot.apstrata.com/apsdb/rest"; 
 		
 		var applicationBehavior = new ApplicationBehavior();
