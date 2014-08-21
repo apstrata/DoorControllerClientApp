@@ -1,7 +1,8 @@
 DoorControllerClientApp
 =======================
 
-Sample kinoma application that interacts with the DoorControllerApp (aiutomatically opens the door, etc.)
+Sample kinoma application that interacts with the DoorControllerApp (aiutomatically opens the door, etc.).
+
 **Note: you need to use this application in combination with [DoorControllerApp](https://github.com/apstrata/DoorControllerApp), [DoorControllerApp-backend](https://github.com/apstrata/DoorControllerApp-backend) and [kinoma-sdk](https://github.com/apstrata/kinoma-sdk)**
 
 How to use 
