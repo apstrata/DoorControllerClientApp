@@ -9,6 +9,8 @@ How to use
 ==========
 
 * Import the project to Kinoma studio
+* Import the [kinoma-sdk](https://github.com/apstrata/kinoma-sdk) to Kinoma studio and link it to your project (or just copy the "apstrataClientModule.js" file 
+to the "src" folder)
 * Make sure that you have specified adequate values for your test in the main.xml file (DoorControllerClientApp/src/main.xml)
 * Click on "application.xml" then right-click "Run as" > "Kinoma simulator". This launches a virtual Kinoma player device
 * A button is displayed in the middle of the screen. 
