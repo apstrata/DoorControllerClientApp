@@ -12,6 +12,10 @@ How to use
 * Import the [kinoma-sdk](https://github.com/apstrata/kinoma-sdk) to Kinoma studio and link it to your project (or just copy the "apstrataClientModule.js" file 
 to the "src" folder)
 * Make sure that you have specified adequate values for your test in the main.xml file (DoorControllerClientApp/src/main.xml)
+  * Set the value of the AUTH_KEY variable to your Apstrata auth key
+  * Set the value of the ID variable to the username of one of your Apstrata users
+  * Set the value of the PWD variable to the password of the aforementioned user
+  * Make sure that the value of the URL variable points to your Apstrata cluster endpoint
 * Click on "application.xml" then right-click "Run as" > "Kinoma simulator". This launches a virtual Kinoma player device
 * A button is displayed in the middle of the screen. 
 * You can also export the application as an Android app. Double-click on "application xml" send click on "Android Export Wizard"
